@@ -1,0 +1,42 @@
+#define LED_GREEN 5
+
+
+#define RED_BUTTON 2
+#define GREEN_BUTTON 4
+
+int light = 120;
+
+void initRGB()
+{
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
+
+
+    pinMode(LED_GREEN, OUTPUT);
+    analogWrite(LED_GREEN, light);
+
+}
+
+void initButtons()
+{
+    pinMode(RED_BUTTON, INPUT_PULLUP);
+    pinMode(GREEN_BUTTON, INPUT_PULLUP);
+}
+
+void setup()
+{
+    initRGB();
+    initButtons();
+}
+
+void loop()
+{
+  if (digitalRead(GREEN_BUTTON) == LOW && light < 255){
+        light += 5;
+  }
+  
+  if (digitalRead(RED_BUTTON) == LOW && light > 0){
+        light -= 5;
+  }
+  analogWrite(LED_GREEN, light);
+}
