@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from abc import ABC, abstractmethod
 import time
 import os
 import board
@@ -73,11 +72,11 @@ class DisplayController:
             elif self.name == 'tempBME':
                 return self.sensors.bme280.temperature
             elif self.name == 'humidity':
-                return self.sensors.bme280.temperature
+                return self.sensors.bme280.humidity
             elif self.name == 'pressure':
-                return self.sensors.bme280.temperature
+                return self.sensors.bme280.pressure
             elif self.name == 'altitude':
-                return self.sensors.bme280.temperature                       
+                return self.sensors.bme280.altitude                      
 
     def display_current_parameter(self):
         self.diods.display_value(
