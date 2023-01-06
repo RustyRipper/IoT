@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 # pylint: disable=no-member
 
+from config import *  # pylint: disable=unused-wildcard-import
+import RPi.GPIO as GPIO
 import time
 import RPi.GPIO as GPIO
 from config import * # pylint: disable=unused-wildcard-import
 from mfrc522 import MFRC522
 import neopixel
 import board
+from datetime import datetime
 
 class Ex2:
 
@@ -21,11 +24,15 @@ class Ex2:
         self.pixels.fill((0, 0, 0))
 
 
-    def buzzer(self):
-        pass
+    def buzzer(self):     
+        GPIO.output(buzzerPin, False)
+        time.sleep(1)
+        GPIO.output(buzzerPin, False)  # pylint: disable=no-member
 
-    def rfidRead(self):
+    def is_other_card(self):
+        return True
         
+    def rfidRead(self):
         (status, TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
         if status == self.MIFAREReader.MI_OK:
             (status, uid) = self.MIFAREReader.MFRC522_Anticoll()
@@ -34,8 +41,13 @@ class Ex2:
                 for i in range(0, len(uid)):
                     num += uid[i] << (i*8)
                 print(f"Card read UID: {uid} > {num}")
-                self.buzzer()
-                self.led()
+
+                if(self.is_other_card()):
+                    now = datetime.now()
+                    current_time = now.strftime("%H:%M:%S")
+                    print("Current Time =", current_time)
+                    self.buzzer()
+                    self.led()
                 time.sleep(0.5)
 
 
