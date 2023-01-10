@@ -16,6 +16,7 @@ class Ex2:
     def __init__(self) -> None:
         self.pixels = neopixel.NeoPixel(board.D18, self.amount_of_diods, brightness=1.0 / 32, auto_write=False)
         self.MIFAREReader = MFRC522()
+        self.is_read = False
 
     
     def led(self):
@@ -29,8 +30,6 @@ class Ex2:
         time.sleep(1)
         GPIO.output(buzzerPin, False)  # pylint: disable=no-member
 
-    def is_other_card(self):
-        return True
         
     def rfidRead(self):
         (status, TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
@@ -42,14 +41,17 @@ class Ex2:
                     num += uid[i] << (i*8)
                 print(f"Card read UID: {uid} > {num}")
 
-                if(self.is_other_card()):
+                if(not self.is_read):
                     now = datetime.now()
                     current_time = now.strftime("%H:%M:%S")
                     print("Current Time =", current_time)
                     self.buzzer()
                     self.led()
-                time.sleep(0.5)
-
+                    self.is_read = False
+                else:
+                    self.is_read = False
+        else:
+            self.is_read = False
 
 ex2: Ex2 = Ex2()
 

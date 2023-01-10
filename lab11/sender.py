@@ -81,52 +81,52 @@ def run_sender(ex2):
 
     # Start to display window (It will stay here until window is displayed)
     #window.mainloop()
-    time.sleep(5)
-    call_worker("12345678")
-    #while True:
-        #ex2.rfidRead()
+    #time.sleep(5)
+    #call_worker("12345678")
+    while True:
+        ex2.rfidRead()
     disconnect_from_broker()
 
 class Ex2:
 
     def __init__(self) -> None:
-        pass
-        #self.pixels = neopixel.NeoPixel(board.D18, self.amount_of_diods, brightness=1.0 / 32, auto_write=False)
-        #self.MIFAREReader = MFRC522()
-
+        self.pixels = neopixel.NeoPixel(board.D18, self.amount_of_diods, brightness=1.0 / 32, auto_write=False)
+        self.MIFAREReader = MFRC522()
+        self.is_read = False
     
-    #def led(self):
-        #self.pixels.fill((0, 255, 0))
-        #time.sleep(3)
-        #self.pixels.fill((0, 0, 0))
+    def led(self):
+        self.pixels.fill((0, 255, 0))
+        time.sleep(3)
+        self.pixels.fill((0, 0, 0))
 
 
-    #def buzzer(self):     
-        #GPIO.output(buzzerPin, False)
-        #time.sleep(1)
-        #GPIO.output(buzzerPin, False)  # pylint: disable=no-member
-
-    def is_other_card(self):
-        return True
+    def buzzer(self):     
+        GPIO.output(buzzerPin, False)
+        time.sleep(1)
+        GPIO.output(buzzerPin, False)  # pylint: disable=no-member
         
-    # def rfidRead(self):
-    #     (status, TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
-    #     if status == self.MIFAREReader.MI_OK:
-    #         (status, uid) = self.MIFAREReader.MFRC522_Anticoll()
-    #         if status == self.MIFAREReader.MI_OK:
-    #             num = 0
-    #             for i in range(0, len(uid)):
-    #                 num += uid[i] << (i*8)
-    #             print(f"Card read UID: {uid} > {num}")
+    def rfidRead(self):
+        (status, TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
+        if status == self.MIFAREReader.MI_OK:
+            (status, uid) = self.MIFAREReader.MFRC522_Anticoll()
+            if status == self.MIFAREReader.MI_OK:
+                num = 0
+                for i in range(0, len(uid)):
+                    num += uid[i] << (i*8)
+                print(f"Card read UID: {uid} > {num}")
 
-    #             if(self.is_other_card()):
-    #                 now = datetime.now()
-    #                 current_time = now.strftime("%H:%M:%S")
-    #                 print("Current Time =", current_time)
-    #                 self.buzzer()
-    #                 self.led()
-    #                 call_worker(uid)
-    #             time.sleep(0.5)
+                if(not self.is_read):
+                    now = datetime.now()
+                    current_time = now.strftime("%H:%M:%S")
+                    print("Current Time =", current_time)
+                    self.buzzer()
+                    self.led()
+                    call_worker(uid)
+                    self.is_read = True
+                else:
+                    self.is_read = False   
+        else:
+            self.is_read = False        
 
 
 ex2: Ex2 = Ex2()
